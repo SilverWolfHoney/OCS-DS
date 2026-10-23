@@ -4,10 +4,10 @@
 
 > | 模型 | 说明 |
 > | --- | --- |
-> | `deepseek-flash` | 当前主模型（DeepSeek-V4.1-Flash），**支持识图**，便宜快 |
+> | `deepseek-flash` | 当前主模型（DeepSeek-V4.1-Flash），**支持识图** |
 > | `deepseek-v4-pro` | 更强的推理模型，**不支持识图** |
 >
-> 本文配置使用 `deepseek-flash`。
+> 本项目配置使用 `deepseek-flash`。
 
 ## 交付文件
 
@@ -36,8 +36,8 @@
 
 ### 2. 安装脚本
 
-1. 浏览器先装好 **Tampermonkey（油猴）** 或 **ScriptCat（脚本猫）**
-2. 把 `OCS 网课助手-5.2.1-DS.user.js` 拖进浏览器窗口，扩展会弹出安装页，点「安装」
+1. 浏览器先装好 **Tampermonkey（油猴）**
+2. 把 `OCS 网课助手-5.2.1-DS.user.js` 拖进Tampermonkey（油猴）的管理面板，会弹出安装页，点「安装」
 3. 如果之前装过官方版 OCS 5.2.1，**先禁用或删除旧版**，避免两个脚本同时运行
 
 ### 3. 填 key
@@ -48,7 +48,7 @@
 "Authorization": "Bearer sk-REPLACE_WITH_YOUR_KEY"
 ```
 
-把 `sk-REPLACE_WITH_YOUR_KEY` 换成你的 key（`Bearer ` 前缀保留）。保存。
+把 `sk-REPLACE_WITH_YOUR_KEY` 换成你的 key（`Bearer` 前缀保留）。保存。
 
 ### 4. 导入题库配置
 
