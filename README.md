@@ -1,6 +1,6 @@
 # OCS 网课助手 5.2.1 接入 DeepSeek 答题
 
-用官方 DeepSeek API（按量付费）替代题库网站来答题。**脚本主体逻辑没动**，与原版的差异只有下面 4 处。
+用官方 DeepSeek API（按量付费）替代题库网站来答题。**脚本主体逻辑没动**。
 
 > | 模型 | 说明 |
 > | --- | --- |
@@ -103,13 +103,6 @@ Invoke-RestMethod -Uri "https://api.deepseek.com/chat/completions" -Method Post 
 ```
 
 返回 `choices[0].message.content` 为 `2` 就说明 key、余额都正常。
-
-## 图片题是怎么接上的
-
-- 开启「图片题优化」后，OCS 会把题干/选项里的图片 URL 下载成 base64 PNG（防防盗链），并把题干里的图片 URL 替换成 `[图片1]`、`[图片2]` 标记
-- 配置里的 `messages.handler` 检测到 `env.images` 非空时，把文字和图片一起组成 `content` 数组，图片以 `{"type":"image_url","image_url":{"url":"data:image/png;base64,..."}}` 传入
-- DeepSeek 的限制：仅 `user` 消息可带图片；单图 ≤32MB；每张图最多按 1024 tokens 计费；单请求最多 600 张图
-- 纯图片、题干里没有可识别 URL 的题（例如整块截图直接当背景）可能抓不到图，仍会按文字处理
 
 ## 以后 OCS 出新版，怎么手动合并
 
