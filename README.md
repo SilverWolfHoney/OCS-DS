@@ -2,8 +2,6 @@
 
 用官方 DeepSeek API（按量付费）替代题库网站来答题。**脚本主体逻辑没动**，与原版的差异只有下面 4 处。
 
-> **2026-10 更新**：DeepSeek 官方 API 的模型已经换了。`deepseek-chat` / `deepseek-reasoner` 已退役，现在的模型是：
->
 > | 模型 | 说明 |
 > | --- | --- |
 > | `deepseek-flash` | 当前主模型（DeepSeek-V4.1-Flash），**支持识图**，便宜快 |
@@ -17,7 +15,6 @@
 | --- | --- |
 | `OCS 网课助手-5.2.1-DS.user.js` | 改造后的脚本 |
 | `deepseek-answerer-config.json` | DeepSeek 题库配置，把里面的 key 换成你自己的即可 |
-| `OCS 网课助手-5.2.1.txt` | 官方原版，保留未动，方便对比/回退 |
 
 ## 与原版的差异（4 处）
 
@@ -27,7 +24,7 @@
 4. 内置更新通知 `autoNotify` 默认值 `true` → `false`（不再自动请求 `cdn.ocsjs.com` 检查版本、不再弹更新提示）
 
 **自动更新已完全切断**：Tampermonkey 不会再提示更新，OCS 自带的更新通知也不会自动弹。
-唯一还会请求 `cdn.ocsjs.com` 的地方，是你**主动**打开「📥 更新模块」页面时查一次版本（不弹窗）。需要的话可以再把这个也停掉。
+唯一还会请求 `cdn.ocsjs.com` 的地方，是你**主动**打开「📥 更新模块」页面时查一次版本（不弹窗）。
 
 ## 使用步骤
 
@@ -73,7 +70,7 @@ OCS 默认不处理图片题。要答图片题：
 | 参数 | 值 | 说明 |
 | --- | --- | --- |
 | `model` | `deepseek-flash` | 当前主模型，支持识图 |
-| `thinking` | `{"type":"disabled"}` | 关闭思考模式。**不关的话默认开启且 effort=high，每题会先输出一大段推理，慢且费** |
+| `thinking` | `{"type":"disabled"}` | 关闭思考模式。**不关的话默认开启且 effort=high，每题会先输出一大段推理** |
 | `temperature` | `0` | 固定输出，减少随机性（仅非思考模式生效） |
 | `messages` | handler | 动态把题型、题干、选项（以及图片）拼成请求 |
 | `handler` | 字符串 | 把模型输出清洗成 `A` / `ABD` / `正确` / `答案===答案` 这类标准格式 |
@@ -123,9 +120,7 @@ Invoke-RestMethod -Uri "https://api.deepseek.com/chat/completions" -Method Post 
    - 在 `@connect` 列表里加一行 `// @connect api.deepseek.com`
    - 删除 `// @updateURL` 和 `// @downloadURL` 两行
    - 搜索 `autoNotify:`，把附近的 `defaultValue: true` 改成 `false`
-3. 保存后拖进浏览器安装（会覆盖旧版），**题库配置不用重配**
-
-改动很少，直接用编辑器改就行；如果嫌麻烦，把新版发给我，我帮你合并。
+3. 保存后重新安装（会覆盖旧版），**题库配置不用重配**
 
 ## 注意事项与限制
 
@@ -133,13 +128,3 @@ Invoke-RestMethod -Uri "https://api.deepseek.com/chat/completions" -Method Post 
 - **费用**：deepseek-flash 定价低；普通文字题每题几百 tokens，图片题每图最多约 1024 tokens，正常使用成本很低
 - **key 安全**：json 里是明文 key，不要发给别人；不要用「公开题库配置」分享站点
 - **回退**：禁用/删除本脚本，装回官方原版即可
-
-## 如果答题效果不理想
-
-先看结果面板里 DeepSeek 返回的原始答案是什么：
-
-- 答案内容对但没选中选项 → 格式没对齐，把结果面板里的原始内容发我，我改 handler
-- 答案经常错 → 换 `thinking` 开启模式，或把 `model` 换成 `deepseek-v4-pro`（换后图片题失效）
-- 报 `model not found` → 配置里的模型名被旧配置覆盖了，重新粘贴本 json
-- 报余额不足 / 401 → 检查 key 与充值
-- 完全没请求 → 检查装的是不是本文件、白名单是否还在
