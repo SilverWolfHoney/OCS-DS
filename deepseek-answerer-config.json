@@ -1,0 +1,28 @@
+[
+  {
+    "name": "DeepSeek",
+    "homepage": "https://platform.deepseek.com",
+    "url": "https://api.deepseek.com/chat/completions",
+    "method": "post",
+    "type": "GM_xmlhttpRequest",
+    "contentType": "json",
+    "responseType": "json",
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer sk-REPLACE_WITH_YOUR_KEY"
+    },
+    "data": {
+      "model": "deepseek-flash",
+      "thinking": {
+        "type": "disabled"
+      },
+      "temperature": 0,
+      "max_tokens": 512,
+      "stream": false,
+      "messages": {
+        "handler": "return (env) => {\n  const images = Array.isArray(env.images) ? env.images : [];\n  const sys = \"你是网课答题助手。根据题干、选项和图片，直接给出正确答案，不要解释、不要输出思考过程、不要使用 Markdown。输出规则：1. 单选题（single）只输出一个选项字母，如 A；2. 多选题（multiple）只输出所有正确选项的字母并连续书写，如 ABD；3. 判断题（judgement）若选项以字母开头（如 A. 正确）只输出对应字母，若选项是纯判断词（如 正确/错误、对/错、√/×）只输出正确的那一项原文；4. 填空题（completion）只输出要填的内容，多个空用 === 分隔；5. 题型 unknown 时按单选输出字母；6. 无法确定时给出最可能的答案，不要输出无法确定。\";\n  const title = env.suggestion_title || env.title || \"\";\n  const options = env.suggestion_options || env.options || \"\";\n  const type = env.type || \"unknown\";\n  let text = \"题型：\" + type + \"\\n题目：\" + title;\n  if (options) text = text + \"\\n选项：\\n\" + options;\n  if (images.length) text = text + \"\\n\\n注意：题目中的 [图片N] 分别对应后附的第 N 张图片，请结合图片内容作答。\";\n  const content = [{ type: \"text\", text: text }];\n  for (let i = 0; i < images.length; i++) content.push({ type: \"image_url\", image_url: { url: images[i], detail: \"high\" } });\n  return [{ role: \"system\", content: sys }, { role: \"user\", content: content }];\n}"
+      }
+    },
+    "handler": "return (res) => { const msg = res && res.choices && res.choices[0] && res.choices[0].message; let c = msg && typeof msg.content === \"string\" ? msg.content : \"\"; c = c.replace(/```[a-zA-Z]*\\n?([\\s\\S]*?)```/g, \"$1\").replace(/`{3,}/g, \"\").replace(/\\r/g, \"\").trim(); c = c.replace(/^(最终答案|答案|answer|选项)\\s*[:：]\\s*/i, \"\").trim(); const lines = c.split(/\\n+/).map((s) => s.trim()).filter(Boolean); let first = lines.find((l) => l.includes(\"===\")) || lines[0] || \"\"; first = first.replace(/^`+|`+$/g, \"\").trim(); first = first.replace(/^[（(【\\[]|[）)】\\]]$/g, \"\").trim(); if (/^[A-Za-z](?:\\s*[、,，;；|/\\s]\\s*[A-Za-z])+$/.test(first)) { first = first.replace(/[^A-Za-z]/g, \"\").toUpperCase(); } else if (/^[A-Za-z]{1,10}$/.test(first)) { first = first.toUpperCase(); } return [\"\", first]; }"
+  }
+]
